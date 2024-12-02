@@ -7,30 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
-model password_resets {
-  email      String    @db.VarChar(255)
-  token      String    @db.VarChar(255)
-  created_at DateTime? @db.Timestamp(0)
-
-  @@index([email], map: "password_resets_email_index")
-  @@ignore
-}
-
-model personal_access_tokens {
-  id             BigInt    @id @default(autoincrement()) @db.UnsignedBigInt
-  tokenable_type String    @db.VarChar(255)
-  tokenable_id   BigInt    @db.UnsignedBigInt
-  name           String    @db.VarChar(255)
-  token          String    @unique(map: "personal_access_tokens_token_unique") @db.VarChar(64)
-  abilities      String?   @db.Text
-  last_used_at   DateTime? @db.Timestamp(0)
-  created_at     DateTime? @db.Timestamp(0)
-  updated_at     DateTime? @db.Timestamp(0)
-
-  @@index([tokenable_type, tokenable_id], map: "personal_access_tokens_tokenable_type_tokenable_id_index")
-}
-
 model users {
   id                BigInt           @id @default(autoincrement()) @db.UnsignedBigInt
   name              String?          @db.VarChar(150)
