@@ -1,0 +1,64 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model password_resets {
+  email      String    @db.VarChar(255)
+  token      String    @db.VarChar(255)
+  created_at DateTime? @db.Timestamp(0)
+
+  @@index([email], map: "password_resets_email_index")
+  @@ignore
+}
+
+model personal_access_tokens {
+  id             BigInt    @id @default(autoincrement()) @db.UnsignedBigInt
+  tokenable_type String    @db.VarChar(255)
+  tokenable_id   BigInt    @db.UnsignedBigInt
+  name           String    @db.VarChar(255)
+  token          String    @unique(map: "personal_access_tokens_token_unique") @db.VarChar(64)
+  abilities      String?   @db.Text
+  last_used_at   DateTime? @db.Timestamp(0)
+  created_at     DateTime? @db.Timestamp(0)
+  updated_at     DateTime? @db.Timestamp(0)
+
+  @@index([tokenable_type, tokenable_id], map: "personal_access_tokens_tokenable_type_tokenable_id_index")
+}
+
+model users {
+  id                BigInt           @id @default(autoincrement()) @db.UnsignedBigInt
+  name              String?          @db.VarChar(150)
+  email             String           @unique(map: "users_email_unique") @db.VarChar(150)
+  email_verified_at DateTime?        @db.Timestamp(0)
+  password          String?          @db.VarChar(255)
+  two_factor_secret String?          @db.Text
+  two_factor_recovery_code String?          @db.Text
+  two_factor_confirmed_at String?          @db.Text
+  phone             String?          @db.VarChar(20)
+  address           String?          @db.Text
+  level             String?          @db.VarChar(50)
+  image_user        String?          @db.VarChar(255)
+  remember_token    String?          @db.VarChar(100)
+  created_by        String?          @db.VarChar(255)
+  updated_by        String?          @db.VarChar(255)
+  created_at        DateTime?        @db.Timestamp(0)
+  updated_at        DateTime?        @db.Timestamp(0)
+  user_log_token    user_log_token[]
+}
+
+model user_log_token {
+  id         BigInt    @id @default(autoincrement())
+  token      String?   @db.VarChar(500)
+  created_at DateTime? @db.Timestamp(0)
+  user_id    BigInt?   @db.UnsignedBigInt
+  updated_at DateTime? @db.Timestamp(0)
+  users      users?    @relation(fields: [user_id], references: [id], map: "user_log_token_FK")
+
+  @@index([user_id], map: "user_log_token_FK")
+}
