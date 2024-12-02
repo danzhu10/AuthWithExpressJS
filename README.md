@@ -38,8 +38,7 @@ cd authentication-api
 ### 2. Install Dependencies
 
 ```bash
-git clone https://github.com/your-username/authentication-api.git
-cd authentication-api
+npm install
 ```
 
 ### 3. Configure Environment Variables
